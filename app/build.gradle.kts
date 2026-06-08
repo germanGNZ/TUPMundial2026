@@ -58,8 +58,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     // Retrofit core
     implementation(libs.retrofit)
-// Convertidor JSON (Gson)
-    implementation(libs.converter.gson)
     // 1. Librería base de Kotlinx Serialization (JSON)
     implementation(libs.kotlinx.serialization.json)
     // 2. Convertidor oficial de Retrofit para Kotlinx Serialization (Square)
@@ -67,7 +65,7 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     // Implementación principal (incluye dependencias de Android)
     implementation(libs.androidx.datastore.preferences)
-    // Versión estable recomendada (Mayo 2026)
+    // Versión estable recomendada (mayo 2026)
     implementation(libs.androidx.navigation.compose)
 
 }

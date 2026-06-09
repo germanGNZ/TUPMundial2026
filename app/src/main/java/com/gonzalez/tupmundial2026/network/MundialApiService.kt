@@ -12,3 +12,4 @@ interface MundialApiService {
     suspend fun getPartidosDetalle(): List<DTOPartidosDetalle>
 
 }
+

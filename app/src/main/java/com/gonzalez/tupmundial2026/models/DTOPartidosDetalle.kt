@@ -16,3 +16,4 @@ data class DTOPartidosDetalle(
     val estadio: String,
 )
 
+

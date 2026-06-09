@@ -10,6 +10,7 @@ import com.gonzalez.tupmundial2026.models.DTOPartidosLista
 import com.gonzalez.tupmundial2026.repository.MundialRepository
 import kotlinx.coroutines.launch
 
+@Suppress("unused", "UnusedReceiverParameter")
 class MundialViewModel (private val repository: MundialRepository) : ViewModel() {
 
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
@@ -20,6 +21,7 @@ class MundialViewModel (private val repository: MundialRepository) : ViewModel()
         TODO("Not yet implemented")
     }
 
+    @Suppress("FunctionName")
     fun LlamarPartidos() {
         viewModelScope.launch {
             isLoading = true

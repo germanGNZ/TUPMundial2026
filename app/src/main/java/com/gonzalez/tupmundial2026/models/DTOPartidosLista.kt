@@ -11,4 +11,4 @@ data class DTOPartidosLista(
         val estadio: String,
         val flags1: String,
         val flags2: String
-)s
+)

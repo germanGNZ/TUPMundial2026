@@ -10,30 +10,36 @@ import com.gonzalez.tupmundial2026.models.DTOPartidosLista
 import com.gonzalez.tupmundial2026.repository.MundialRepository
 import kotlinx.coroutines.launch
 
-@Suppress("unused", "UnusedReceiverParameter")
 class MundialViewModel (private val repository: MundialRepository) : ViewModel() {
 
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
+
+    var partidosDetalle by mutableStateOf(emptyList<DTOPartidosDetalle>())
     var isLoading by mutableStateOf(false)
         private set
 
-    private fun List<DTOPartidosLista>.add(fetchPartidosLista: List<DTOPartidosLista>) {
-        TODO("Not yet implemented")
-    }
-
-    @Suppress("FunctionName")
-    fun LlamarPartidos() {
+    fun LlamarPartidos(add: List<DTOPartidosLista>.(List<DTOPartidosLista?>) -> Unit) {
         viewModelScope.launch {
             isLoading = true
 
             try {
                 partidosLista.add(repository.fetchPartidosLista())
-            } catch (e: Exception) { /* error */
-            }
+            } catch (e: Exception){ /* Error */ }
 
             isLoading = false
         }
     }
 
-    var partidosDetalle by mutableStateOf(emptyList<DTOPartidosDetalle>())
+    fun LlamarDetalle(add: List<DTOPartidosDetalle>.(List<DTOPartidosDetalle?>) -> Unit) {
+        viewModelScope.launch {
+            isLoading = true
+
+            try {
+                partidosDetalle.add(listOf(repository.fetchPartidosDetalle()))
+            } catch (e: Exception){ /* Error */ }
+
+            isLoading = false
+        }
+    }
+
 }

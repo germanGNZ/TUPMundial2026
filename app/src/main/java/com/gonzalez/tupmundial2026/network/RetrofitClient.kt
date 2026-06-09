@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.gonzalez.tupmundial2026.network
 
 
@@ -12,7 +10,7 @@ object RetrofitClient {
     private val json = Json { ignoreUnknownKeys = true }
     val api: MundialApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("s")
+            .baseUrl("https://6a209d5be96c1d13b587affb.mockapi.io/")
             .addConverterFactory(
                 json.asConverterFactory(
                     "application/json".toMediaType()

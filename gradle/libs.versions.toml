@@ -12,7 +12,6 @@ kotlin = "2.4.0"
 composeBom = "2026.05.01"
 navigationCompose = "2.9.8"
 retrofit = "3.0.0"
-okhttp = "5.4.0"
 converterKotlinxSerialization = "3.0.0"
 
 [libraries]
@@ -39,4 +38,5 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
 

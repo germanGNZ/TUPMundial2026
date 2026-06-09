@@ -15,3 +15,4 @@ data class DTOPartidosDetalle(
     val precio: String,
     val estadio: String,
 )
+

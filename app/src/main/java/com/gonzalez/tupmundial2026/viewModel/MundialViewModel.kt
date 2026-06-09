@@ -26,7 +26,8 @@ class MundialViewModel (private val repository: MundialRepository) : ViewModel()
 
             try {
                 partidosLista.add(repository.fetchPartidosLista())
-            } catch (e: Exception) { /* error */ }
+            } catch (e: Exception) { /* error */
+            }
 
             isLoading = false
         }

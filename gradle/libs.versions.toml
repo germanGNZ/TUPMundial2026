@@ -1,6 +1,5 @@
 [versions]
-agp = "9.1.1"
-converterGson = "3.0.0"
+agp = "9.2.1"
 coreKtx = "1.19.0"
 datastorePreferences = "1.2.1"
 junit = "4.13.2"
@@ -13,7 +12,7 @@ kotlin = "2.4.0"
 composeBom = "2026.05.01"
 navigationCompose = "2.9.8"
 retrofit = "3.0.0"
-okhttp = "5.3.2"
+okhttp = "5.4.0"
 converterKotlinxSerialization = "3.0.0"
 
 [libraries]
@@ -36,8 +35,6 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-loggin-interceptor = { group = "com.squareup.okhttp3", name= "logging-interceptor", version.ref = "okhttp" }
-convert-kotlinx-serialization = { module = "com.square.retrofit2:converter-kotlinx-serializable", version.ref = "converterKotlinxSerialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

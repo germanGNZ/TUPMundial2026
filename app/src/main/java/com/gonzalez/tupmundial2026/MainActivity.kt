@@ -18,12 +18,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TUPMundial2026Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            MyAppTheme {
+                Surface {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "¡Mi primera app!", fontSize = 24.sp)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { /* TODO */ }) {
+                            Text("Presióname")
+                        }
+                    }
                 }
             }
         }

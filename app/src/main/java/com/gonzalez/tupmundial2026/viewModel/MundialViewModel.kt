@@ -20,15 +20,18 @@ class MundialViewModel (private val repository: MundialRepository) : ViewModel()
         TODO("Not yet implemented")
     }
 
+    // Reemplaza la función add por esto:
     fun LlamarPartidos() {
         viewModelScope.launch {
             isLoading = true
-
             try {
-                partidosLista.add(repository.fetchPartidosLista())
-            } catch (e: Exception) { /* error */ }
-
-            isLoading = false
+                partidosLista = repository.fetchPartidosLista()  // ← Asignación directa
+            } catch (e: Exception) {
+                // Manejar error (por ejemplo, mostrar mensaje)
+                e.printStackTrace()
+            } finally {
+                isLoading = false
+            }
         }
     }
 

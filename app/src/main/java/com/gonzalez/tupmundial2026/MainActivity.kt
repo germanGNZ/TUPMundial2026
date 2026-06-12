@@ -13,13 +13,13 @@ import com.gonzalez.tupmundial2026.models.AppNavigation
 import com.gonzalez.tupmundial2026.ui.theme.TUPMundial2026Theme
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 import com.gonzalez.tupmundial2026.repository.MundialRepository
-import com.gonzalez.tupmundial2026.network.MundialApiService
+//import com.gonzalez.tupmundial2026.network.MundialApiService
 import com.gonzalez.tupmundial2026.network.RetrofitClient
-import com.gonzalez.tupmundial2026.network.RetrofitClient.api
+/*import com.gonzalez.tupmundial2026.network.RetrofitClient.api
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaType*/
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

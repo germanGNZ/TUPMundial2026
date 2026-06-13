@@ -10,44 +10,41 @@ import com.gonzalez.tupmundial2026.models.DTOPartidosLista
 import com.gonzalez.tupmundial2026.repository.MundialRepository
 import kotlinx.coroutines.launch
 
-class MundialViewModel(private val repository: MundialRepository) : ViewModel() {
+class MundialViewModel (private val repository: MundialRepository) : ViewModel() {
 
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
-        private set
-
-    var partidosDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
-        private set
-
     var isLoading by mutableStateOf(false)
         private set
 
-    var errorMessage by mutableStateOf<String?>(null)
+    // --- NUEVO ---
+    var partidoDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
+    var isLoadingDetalle by mutableStateOf(false)
         private set
 
     fun LlamarPartidos() {
         viewModelScope.launch {
             isLoading = true
-            errorMessage = null
             try {
-                // CORRECCIÓN: asignamos directamente el resultado al state
-                partidosLista = repository.fetchPartidosLista()
+                partidosLista = repository.fetchPartidosLista()  // ← Asignación directa
             } catch (e: Exception) {
-                errorMessage = "Error al cargar los partidos: ${e.message}"
+                // Manejar error (por ejemplo, mostrar mensaje)
+                e.printStackTrace()
+            } finally {
+                isLoading = false
             }
-            isLoading = false
         }
     }
 
     fun LlamarDetalle(id: Int) {
         viewModelScope.launch {
-            isLoading = true
-            errorMessage = null
+            isLoadingDetalle = true
             try {
-                partidosDetalle = repository.fetchPartidosDetalle(id)
+                partidoDetalle = repository.fetchPartidoDetalle(id)
             } catch (e: Exception) {
-                errorMessage = "Error al cargar el detalle: ${e.message}"
+                e.printStackTrace()
+            } finally {
+                isLoadingDetalle = false
             }
-            isLoading = false
         }
     }
 }

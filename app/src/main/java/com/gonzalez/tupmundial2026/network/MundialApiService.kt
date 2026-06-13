@@ -5,10 +5,13 @@ import com.gonzalez.tupmundial2026.models.DTOPartidosLista
 import retrofit2.http.GET
 
 interface MundialApiService {
-    @GET("PartidoLista")
+    @GET("PartidosLista")
     suspend fun getPartidosLista(): List<DTOPartidosLista>
 
-    @GET("PartidosDetalle")
-    suspend fun getPartidosDetalle(): List<DTOPartidosDetalle>
+    @GET("PartidosDetalle/{id}")          // ← NUEVO trae UN partido por ID
+    suspend fun getPartidoDetalle(
+        @Path("id") id: Int
+    ): DTOPartidosDetalle
+
 }
 

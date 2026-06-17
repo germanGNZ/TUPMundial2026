@@ -10,25 +10,26 @@ import com.gonzalez.tupmundial2026.models.DTOPartidosLista
 import com.gonzalez.tupmundial2026.repository.MundialRepository
 import kotlinx.coroutines.launch
 
-class MundialViewModel (private val repository: MundialRepository) : ViewModel() {
+class MundialViewModel(private val repository: MundialRepository) : ViewModel() {
 
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
-    var isLoading by mutableStateOf(false)
+        private set
+    var partidosDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
         private set
 
-    // --- NUEVO ---
-    var partidoDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
-    var isLoadingDetalle by mutableStateOf(false)
+    var isLoading by mutableStateOf(false)
+        private set
+    var errorMessage by mutableStateOf<String?>(null)
         private set
 
     fun LlamarPartidos() {
         viewModelScope.launch {
             isLoading = true
+            errorMessage = null
             try {
-                partidosLista = repository.fetchPartidosLista()  // ← Asignación directa
+                partidosLista = repository.fetchPartidosLista()
             } catch (e: Exception) {
-                // Manejar error (por ejemplo, mostrar mensaje)
-                e.printStackTrace()
+                errorMessage = "Error al cargar los partidos: ${e.message}"
             } finally {
                 isLoading = false
             }
@@ -37,13 +38,14 @@ class MundialViewModel (private val repository: MundialRepository) : ViewModel()
 
     fun LlamarDetalle(id: Int) {
         viewModelScope.launch {
-            isLoadingDetalle = true
+            isLoading = true
+            errorMessage = null
             try {
-                partidoDetalle = repository.fetchPartidoDetalle(id)
+                partidosDetalle = repository.fetchPartidoDetalle(id)
             } catch (e: Exception) {
-                e.printStackTrace()
+                errorMessage = "Error al cargar el detalle: ${e.message}"
             } finally {
-                isLoadingDetalle = false
+                isLoading = false
             }
         }
     }

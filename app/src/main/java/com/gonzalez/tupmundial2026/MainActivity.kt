@@ -17,13 +17,56 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val db = AppDatabase.getInstance(this)
+        val authViewModel = AuthViewModel(db.usuarioDao())
+        val mundialViewModel = MundialViewModel(MundialRepository())
+
         setContent {
             TUPMundial2026Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+
+                NavHost(navController, startDestination = "login") {
+
+                    composable("login") {
+                        LoginScreen(
+                            viewModel = authViewModel,
+                            onLoginExitoso = {
+                                navController.navigate("lista") {
+                                    popUpTo("login") { inclusive = true } // no puede volver al login
+                                }
+                            },
+                            onIrARegistro = { navController.navigate("registro") }
+                        )
+                    }
+
+                    composable("registro") {
+                        RegistroScreen(
+                            viewModel = authViewModel,
+                            onRegistroExitoso = {
+                                navController.navigate("lista") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            },
+                            onIrALogin = { navController.popBackStack() }
+                        )
+                    }
+
+                    composable("lista") {
+                        PartidosScreen(
+                            viewModel = mundialViewModel,
+                            onPartidoClick = { id -> navController.navigate("detalle/$id") }
+                        )
+                    }
+
+                    composable("detalle/{id}") { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString("id")?.toInt() ?: return@composable
+                        PartidoDetalleScreen(
+                            id = id,
+                            viewModel = mundialViewModel,
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
                 }
             }
         }

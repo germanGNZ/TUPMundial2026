@@ -5,16 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
-import com.gonzalez.tupmundial2026.ui.navigation.AppNavigation
-//import com.gonzalez.tupmundial2026.navigation.AppNavigation
-import com.gonzalez.tupmundial2026.network.RetrofitClient
-import com.gonzalez.tupmundial2026.repository.MundialRepository
+import androidx.compose.ui.tooling.preview.Preview
 import com.gonzalez.tupmundial2026.ui.theme.TUPMundial2026Theme
-import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,24 +19,30 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TUPMundial2026Theme {
-                val repository = remember { MundialRepository(RetrofitClient.api) }
-                val viewModel: MundialViewModel = viewModel(
-                    factory = object : androidx.lifecycle.ViewModelProvider.Factory {
-                        @Suppress("UNCHECKED_CAST")
-                        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                            return MundialViewModel(repository) as T
-                        }
-                    }
-                )
-                val navController = rememberNavController()
-
-                AppNavigation(
-                    modifier = Modifier.fillMaxSize(),
-                    viewModel = viewModel,
-                    navController = navController
-                )
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Greeting(
+                        name = "Android",
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    TUPMundial2026Theme {
+        Greeting("Android")
     }
 }
 

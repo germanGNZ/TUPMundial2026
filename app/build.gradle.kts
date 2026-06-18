@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.0"
+    id 'kotlin-kapt'
 }
 
 android {
@@ -74,5 +75,9 @@ dependencies {
     // Versión estable recomendada (mayo 2026)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.material.icons)
+    // Room
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    kapt "androidx.room:room-compiler:2.6.1"
 
 }

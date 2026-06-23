@@ -5,87 +5,40 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.gonzalez.tupmundial2026.data.AppDatabase
+import com.gonzalez.tupmundial2026.network.RetrofitClient
+import com.gonzalez.tupmundial2026.repository.AuthRepository
+import com.gonzalez.tupmundial2026.repository.MundialRepository
+import com.gonzalez.tupmundial2026.ui.navigation.AppNavigation
 import com.gonzalez.tupmundial2026.ui.theme.TUPMundial2026Theme
+import com.gonzalez.tupmundial2026.viewModel.AuthViewModel
+import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Room — base de datos local para usuarios
         val db = AppDatabase.getInstance(this)
-        val authViewModel = AuthViewModel(db.usuarioDao())
-        val mundialViewModel = MundialViewModel(MundialRepository())
+        val authViewModel = AuthViewModel(AuthRepository(db.usuarioDao()))
+
+        // Retrofit — API de partidos
+        val mundialViewModel = MundialViewModel(MundialRepository(RetrofitClient.api))
 
         setContent {
             TUPMundial2026Theme {
                 val navController = rememberNavController()
-
-                NavHost(navController, startDestination = "login") {
-
-                    composable("login") {
-                        LoginScreen(
-                            viewModel = authViewModel,
-                            onLoginExitoso = {
-                                navController.navigate("lista") {
-                                    popUpTo("login") { inclusive = true } // no puede volver al login
-                                }
-                            },
-                            onIrARegistro = { navController.navigate("registro") }
-                        )
-                    }
-
-                    composable("registro") {
-                        RegistroScreen(
-                            viewModel = authViewModel,
-                            onRegistroExitoso = {
-                                navController.navigate("lista") {
-                                    popUpTo("login") { inclusive = true }
-                                }
-                            },
-                            onIrALogin = { navController.popBackStack() }
-                        )
-                    }
-
-                    composable("lista") {
-                        PartidosScreen(
-                            viewModel = mundialViewModel,
-                            onPartidoClick = { id -> navController.navigate("detalle/$id") }
-                        )
-                    }
-
-                    composable("detalle/{id}") { backStackEntry ->
-                        val id = backStackEntry.arguments?.getString("id")?.toInt() ?: return@composable
-                        PartidoDetalleScreen(
-                            id = id,
-                            viewModel = mundialViewModel,
-                            onBack = { navController.popBackStack() }
-                        )
-                    }
-                }
+                AppNavigation(
+                    modifier = Modifier.fillMaxSize(),
+                    mundialViewModel = mundialViewModel,
+                    authViewModel = authViewModel,
+                    navController = navController
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TUPMundial2026Theme {
-        Greeting("Android")
     }
 }
 

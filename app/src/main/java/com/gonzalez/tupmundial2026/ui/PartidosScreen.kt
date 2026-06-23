@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -20,16 +21,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gonzalez.tupmundial2026.models.DTOPartidosLista
+import com.gonzalez.tupmundial2026.utils.formatFecha
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
-
-// Esta pantalla solo se encarga de mostrar la LISTA de partidos.
-// El detalle de un partido vive en DetallesScreen.kt
-// Los colores compartidos están en MundialColors.kt
 
 @Composable
 fun PartidosScreen(
     viewModel: MundialViewModel,
-    onPartidoClick: (Int) -> Unit
+    nombreUsuario: String?,
+    onPartidoClick: (Int) -> Unit,
+    onLogout: () -> Unit
 ) {
     val partidos = viewModel.partidosLista
     val isLoading = viewModel.isLoading
@@ -44,14 +44,28 @@ fun PartidosScreen(
                 .background(Brush.verticalGradient(listOf(VerdeOscuro, VerdeMedio)))
                 .padding(horizontal = 20.dp, vertical = 24.dp)
         ) {
-            Column {
-                Text("⚽ FIFA WORLD CUP", color = Dorado, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 3.sp)
-                Spacer(Modifier.height(4.dp))
-                Text("Mundial 2026", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
-                Text("USA • Canada • México", color = Color.White.copy(alpha = 0.75f), fontSize = 13.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column {
+                    Text("⚽ FIFA WORLD CUP", color = Dorado, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 3.sp)
+                    Spacer(Modifier.height(4.dp))
+                    Text("Mundial 2026", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                    if (nombreUsuario != null) {
+                        Text("Hola, $nombreUsuario 👋", color = Color.White.copy(alpha = 0.75f), fontSize = 13.sp)
+                    } else {
+                        Text("USA • Canada • México", color = Color.White.copy(alpha = 0.75f), fontSize = 13.sp)
+                    }
+                }
+                TextButton(onClick = onLogout) {
+                    Text("Salir", color = Dorado, fontWeight = FontWeight.Bold)
+                }
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(Brush.horizontalGradient(listOf(Dorado, DoradoOscuro, Dorado))))
+        Box(modifier = Modifier.fillMaxWidth().height(3.dp)
+            .background(Brush.horizontalGradient(listOf(Dorado, DoradoOscuro, Dorado))))
 
         when {
             isLoading -> {
@@ -117,3 +131,14 @@ fun PartidoItem(partido: DTOPartidosLista, onClick: () -> Unit) {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+

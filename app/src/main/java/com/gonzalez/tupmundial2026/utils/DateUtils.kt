@@ -1,4 +1,8 @@
-package com.gonzalez.tupmundial2026.ui
+package com.gonzalez.tupmundial2026.utils
+// CORRECCIÓN: package cambiado de "Utils" a "utils" (minúscula).
+// En Android/Kotlin los packages deben ser en minúsculas.
+// La carpeta también debe renombrarse de "Utils" a "utils".
+
 fun formatFecha(fecha: String): String {
     return try {
         val partes = fecha.split("T")

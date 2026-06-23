@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gonzalez.tupmundial2026.utils.formatFecha
 import com.gonzalez.tupmundial2026.models.DTOPartidosDetalle
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 @Composable

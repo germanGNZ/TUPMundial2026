@@ -11,14 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gonzalez.tupmundial2026.models.DTOPartidosDetalle
 import com.gonzalez.tupmundial2026.ui.components.DetalleCard
+import com.gonzalez.tupmundial2026.ui.components.EquiposVsCard
 import com.gonzalez.tupmundial2026.ui.components.HeaderMundial
 import com.gonzalez.tupmundial2026.utils.formatFecha
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
@@ -40,22 +39,18 @@ fun DetalleScreen(
         HeaderMundial(titulo = "Detalle del Partido", onBack = onBack)
 
         when {
-            isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Dorado) }
-            error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(error, color = Color(0xFFEF5350)) }
-            detalle == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No se encontró el partido.", color = Color.White) }
+            isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Dorado)
+            }
+            error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(error, color = Color(0xFFEF5350))
+            }
+            detalle == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("No se encontró el partido.", color = Color.White)
+            }
             else -> Column(modifier = Modifier.padding(20.dp)) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                        .background(Brush.verticalGradient(listOf(VerdeOscuro, VerdeMedio)))
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(detalle.equipo1, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                        Text("VS", color = Dorado, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.padding(vertical = 6.dp))
-                        Text(detalle.equipo2, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
+                // Card equipos — ahora reutilizable desde components
+                EquiposVsCard(equipo1 = detalle.equipo1, equipo2 = detalle.equipo2)
                 Spacer(Modifier.height(16.dp))
                 DetalleCard("📅", "Fecha", formatFecha(detalle.fecha))
                 DetalleCard("🏆", "Grupo", detalle.grupo)

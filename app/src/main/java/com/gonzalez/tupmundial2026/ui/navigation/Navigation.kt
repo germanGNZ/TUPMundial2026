@@ -14,6 +14,7 @@ import com.gonzalez.tupmundial2026.ui.LoginScreen
 import com.gonzalez.tupmundial2026.ui.MisTicketsScreen
 import com.gonzalez.tupmundial2026.ui.PartidosScreen
 import com.gonzalez.tupmundial2026.ui.RegisterScreen
+import com.gonzalez.tupmundial2026.ui.TicketConfirmadoScreen
 import com.gonzalez.tupmundial2026.viewModel.AuthViewModel
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 import com.gonzalez.tupmundial2026.viewModel.TicketViewModel
@@ -30,9 +31,8 @@ fun AppNavigation(
 
         composable("login") {
             LaunchedEffect(authViewModel.estaLogueado) {
-                if (authViewModel.estaLogueado) {
+                if (authViewModel.estaLogueado)
                     navController.navigate("partidos") { popUpTo("login") { inclusive = true } }
-                }
             }
             LoginScreen(
                 viewModel = authViewModel,
@@ -55,9 +55,8 @@ fun AppNavigation(
 
         composable("partidos") {
             LaunchedEffect(authViewModel.estaLogueado) {
-                if (!authViewModel.estaLogueado) {
+                if (!authViewModel.estaLogueado)
                     navController.navigate("login") { popUpTo("partidos") { inclusive = true } }
-                }
             }
             PartidosScreen(
                 viewModel = mundialViewModel,
@@ -76,44 +75,62 @@ fun AppNavigation(
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
             LaunchedEffect(authViewModel.estaLogueado) {
-                if (!authViewModel.estaLogueado) {
+                if (!authViewModel.estaLogueado)
                     navController.navigate("login") { popUpTo(0) { inclusive = true } }
-                }
             }
             val id = backStackEntry.arguments!!.getInt("id")
             DetalleScreen(
                 id = id,
                 viewModel = mundialViewModel,
                 onBack = { navController.popBackStack() },
-                onComprarEntrada = { detalle ->
-                    // Guardamos el detalle en el viewmodel y navegamos a compra
-                    navController.navigate("compra/$id")
-                }
+                onComprarEntrada = { navController.navigate("compra/$id") }
             )
         }
 
-        // NUEVA ruta: pantalla de compra
         composable(
             route = "compra/{partidoId}",
             arguments = listOf(navArgument("partidoId") { type = NavType.IntType })
         ) {
             val detalle = mundialViewModel.partidosDetalle
             val usuarioId = authViewModel.usuarioActual?.id ?: 0
-
             if (detalle != null) {
                 CompraTicketScreen(
                     detalle = detalle,
                     usuarioId = usuarioId,
                     ticketViewModel = ticketViewModel,
                     onCompraExitosa = {
-                        navController.navigate("partidos") { popUpTo("partidos") { inclusive = false } }
+                        // NUEVO: navega a la pantalla de confirmación
+                        navController.navigate("confirmacion") {
+                            popUpTo("compra/{partidoId}") { inclusive = true }
+                        }
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
         }
 
-        // NUEVA ruta: mis tickets
+        // confirmación de compra exitosa
+        composable("confirmacion") {
+            val ticket = ticketViewModel.ultimoTicketComprado
+            if (ticket != null) {
+                TicketConfirmadoScreen(
+                    ticket = ticket,
+                    onVerMisTickets = {
+                        ticketViewModel.limpiarEstado()
+                        navController.navigate("mistickets") {
+                            popUpTo("partidos") { inclusive = false }
+                        }
+                    },
+                    onVolver = {
+                        ticketViewModel.limpiarEstado()
+                        navController.navigate("partidos") {
+                            popUpTo("partidos") { inclusive = false }
+                        }
+                    }
+                )
+            }
+        }
+
         composable("mistickets") {
             val usuarioId = authViewModel.usuarioActual?.id ?: 0
             MisTicketsScreen(

@@ -18,10 +18,11 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    var compraExitosa by mutableStateOf(false)
+    var misTickets by mutableStateOf(emptyList<Ticket>())
         private set
 
-    var misTickets by mutableStateOf(emptyList<Ticket>())
+    // guarda el último ticket comprado para mostrarlo en la confirmación
+    var ultimoTicketComprado by mutableStateOf<Ticket?>(null)
         private set
 
     fun comprar(
@@ -33,10 +34,9 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
-            compraExitosa = false
             try {
-                repository.comprar(usuarioId, detalle, cantidadEntradas)
-                compraExitosa = true
+                val ticket = repository.comprar(usuarioId, detalle, cantidadEntradas)
+                ultimoTicketComprado = ticket
                 onExito()
             } catch (e: Exception) {
                 errorMessage = e.message
@@ -61,5 +61,5 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
     }
 
     fun limpiarError() { errorMessage = null }
-    fun limpiarEstado() { compraExitosa = false; errorMessage = null }
+    fun limpiarEstado() { ultimoTicketComprado = null; errorMessage = null }
 }

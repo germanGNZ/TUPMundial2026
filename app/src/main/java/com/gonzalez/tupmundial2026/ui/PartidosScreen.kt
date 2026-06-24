@@ -7,14 +7,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gonzalez.tupmundial2026.ui.components.FiltroGrupos
 import com.gonzalez.tupmundial2026.ui.components.HeaderMundial
 import com.gonzalez.tupmundial2026.ui.components.PartidoItem
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
@@ -30,6 +30,20 @@ fun PartidosScreen(
     val partidos = viewModel.partidosLista
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
+
+    // Estado del filtro de grupos
+    var grupoSeleccionado by remember { mutableStateOf<String?>(null) }
+
+    // Lista de grupos únicos extraídos de los partidos
+    val grupos = remember(partidos) {
+        partidos.map { it.grupo }.distinct().sorted()
+    }
+
+    // Partidos filtrados según el grupo seleccionado
+    val partidosFiltrados = remember(partidos, grupoSeleccionado) {
+        if (grupoSeleccionado == null) partidos
+        else partidos.filter { it.grupo == grupoSeleccionado }
+    }
 
     LaunchedEffect(Unit) { viewModel.LlamarPartidos() }
 
@@ -62,12 +76,21 @@ fun PartidosScreen(
             partidos.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("No hay partidos disponibles.", color = Color.White.copy(alpha = 0.6f))
             }
-            else -> LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(partidos) { partido ->
-                    PartidoItem(partido = partido, onClick = { onPartidoClick(partido.id) })
+            else -> {
+                // Chips de filtro por grupo
+                FiltroGrupos(
+                    grupos = grupos,
+                    grupoSeleccionado = grupoSeleccionado,
+                    onGrupoClick = { grupoSeleccionado = it }
+                )
+
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(partidosFiltrados) { partido ->
+                        PartidoItem(partido = partido, onClick = { onPartidoClick(partido.id) })
+                    }
                 }
             }
         }

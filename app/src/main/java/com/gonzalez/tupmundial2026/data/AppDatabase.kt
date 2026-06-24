@@ -4,28 +4,36 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// Configuración de la base de datos local.
-// exportSchema = false porque no necesitamos historial de migraciones
-// para este proyecto.
+// MODIFICADO: se agrega Ticket::class a las entidades y se sube
+// la versión a 2. Esto es obligatorio cuando se agrega una tabla nueva
+// a una base de datos Room que ya existe en el celular.
+// fallbackToDestructiveMigration() borra y recrea la base si detecta
+// que la versión cambió — para este proyecto es aceptable.
 
-@Database(entities = [Usuario::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Usuario::class, Ticket::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao
+    abstract fun ticketDao(): TicketDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Singleton: una sola instancia de la base de datos en toda la app.
-        // @Volatile asegura que los cambios sean visibles entre hilos.
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "mundial_db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gonzalez.tupmundial2026.ui.components.campoColores
 import com.gonzalez.tupmundial2026.viewModel.AuthViewModel
 
 @Composable

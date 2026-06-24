@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gonzalez.tupmundial2026.ui.components.campoColores
 import com.gonzalez.tupmundial2026.viewModel.AuthViewModel
 
 @Composable
@@ -110,14 +111,3 @@ fun LoginScreen(
         }
     }
 }
-
-@Composable
-fun campoColores() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = Dorado,
-    unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
-    focusedTextColor = Color.White,
-    unfocusedTextColor = Color.White,
-    focusedLabelColor = Dorado,
-    unfocusedLabelColor = Color.White.copy(alpha = 0.6f),
-    cursorColor = Dorado
-)

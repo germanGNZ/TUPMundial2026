@@ -1,5 +1,6 @@
 package com.gonzalez.tupmundial2026.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -9,15 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gonzalez.tupmundial2026.R
 import com.gonzalez.tupmundial2026.ui.Dorado
 import com.gonzalez.tupmundial2026.ui.DoradoOscuro
 import com.gonzalez.tupmundial2026.ui.VerdeMedio
 import com.gonzalez.tupmundial2026.ui.VerdeOscuro
 
-// Header reutilizable con gradiente verde y línea dorada.
+// Header reutilizable con gradiente verde, logo y línea dorada.
 // Se usa en PartidosScreen, DetallesScreen, CompraTicketScreen y MisTicketsScreen.
 
 @Composable
@@ -46,10 +49,19 @@ fun HeaderMundial(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    Column {
-                        Text(titulo, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
-                        if (subtitulo != null) {
-                            Text(subtitulo, color = Color.White.copy(alpha = 0.75f), fontSize = 13.sp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Logo del Mundial 2026
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_mundial),
+                            contentDescription = "Logo Mundial 2026",
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(titulo, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                            if (subtitulo != null) {
+                                Text(subtitulo, color = Color.White.copy(alpha = 0.75f), fontSize = 13.sp)
+                            }
                         }
                     }
                     if (accionDerecha != null) {

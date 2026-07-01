@@ -2,7 +2,9 @@ package com.gonzalez.tupmundial2026.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.gonzalez.tupmundial2026.ui.components.DetalleCard
 import com.gonzalez.tupmundial2026.ui.components.EquiposVsCard
 import com.gonzalez.tupmundial2026.utils.formatFecha
+import com.gonzalez.tupmundial2026.utils.formatPrecio
 import com.gonzalez.tupmundial2026.data.Ticket
 
 // Pantalla que se muestra después de confirmar una compra exitosa.
@@ -30,7 +33,7 @@ fun TicketConfirmadoScreen(
     onVolver: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(FondoOscuro),
+        modifier = Modifier.fillMaxSize().background(FondoOscuro).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(48.dp))
@@ -64,8 +67,11 @@ fun TicketConfirmadoScreen(
             DetalleCard("📅", "Fecha", formatFecha(ticket.fecha))
             DetalleCard("🏟", "Estadio", ticket.estadio)
             DetalleCard("🏆", "Grupo", ticket.grupo)
+            DetalleCard("📍", "Sector", ticket.sector)
             DetalleCard("🎟", "Entradas", "${ticket.cantidadEntradas} entrada${if (ticket.cantidadEntradas > 1) "s" else ""}")
-            DetalleCard("💰", "Precio", ticket.precio)
+            DetalleCard("💳", "Método de pago", ticket.metodoPago)
+            DetalleCard("👤", "Comprador", "${ticket.nombreComprador} (DNI ${ticket.dniComprador})")
+            DetalleCard("💰", "Total pagado", formatPrecio(ticket.total))
 
             Spacer(Modifier.height(24.dp))
 
@@ -88,6 +94,8 @@ fun TicketConfirmadoScreen(
             ) {
                 Text("Volver a partidos", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
+
+            Spacer(Modifier.height(20.dp))
         }
     }
 }

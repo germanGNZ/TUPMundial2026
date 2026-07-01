@@ -30,7 +30,7 @@ fun RegisterScreen(
     var confirmarPassword by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize().background(FondoOscuro)) {
-        HeaderAuth(emoji = "🏆", titulo = "Crear cuenta", subtitulo = "Registrate para ver los partidos")
+        HeaderAuth(titulo = "Crear cuenta", subtitulo = "Registrate para ver los partidos")
 
         Column(
             modifier = Modifier.fillMaxWidth().padding(24.dp),

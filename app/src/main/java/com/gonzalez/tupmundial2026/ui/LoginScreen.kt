@@ -28,7 +28,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize().background(FondoOscuro)) {
-        HeaderAuth(emoji = "⚽", titulo = "Mundial 2026", subtitulo = "Iniciá sesión para continuar")
+        HeaderAuth(titulo = "Mundial 2026", subtitulo = "Iniciá sesión para continuar")
 
         Column(
             modifier = Modifier.fillMaxWidth().padding(24.dp),

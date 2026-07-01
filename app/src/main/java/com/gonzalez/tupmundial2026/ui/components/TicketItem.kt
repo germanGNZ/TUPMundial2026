@@ -16,6 +16,7 @@ import com.gonzalez.tupmundial2026.ui.Dorado
 import com.gonzalez.tupmundial2026.ui.TarjetaFondo
 import com.gonzalez.tupmundial2026.ui.VerdeOscuro
 import com.gonzalez.tupmundial2026.utils.formatFecha
+import com.gonzalez.tupmundial2026.utils.formatPrecio
 
 // Tarjeta individual de ticket comprado.
 // Separada acá para poder reutilizarla sin copiar código.
@@ -34,13 +35,24 @@ fun TicketItem(ticket: Ticket) {
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 12.dp, top = 14.dp, bottom = 14.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(VerdeOscuro)
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
-            ) {
-                Text(ticket.grupo, color = Dorado, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(VerdeOscuro)
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text(ticket.grupo, color = Dorado, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                }
+                Spacer(Modifier.width(6.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color.White.copy(alpha = 0.1f))
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text(ticket.sector, color = Color.White.copy(alpha = 0.8f), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
             }
             Spacer(Modifier.height(8.dp))
             Text("${ticket.equipo1} vs ${ticket.equipo2}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -48,7 +60,7 @@ fun TicketItem(ticket: Ticket) {
             Text("📅 ${formatFecha(ticket.fecha)}", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)
             Text("🏟 ${ticket.estadio}", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)
             Text("🎟 ${ticket.cantidadEntradas} entrada${if (ticket.cantidadEntradas > 1) "s" else ""}", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)
-            Text("💰 ${ticket.precio}", color = Dorado, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+            Text("💰 Total: ${formatPrecio(ticket.total)}", color = Dorado, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }

@@ -53,7 +53,7 @@ fun DetalleScreen(
                 EquiposVsCard(equipo1 = detalle.equipo1, equipo2 = detalle.equipo2)
                 Spacer(Modifier.height(16.dp))
                 DetalleCard("📅", "Fecha", formatFecha(detalle.fecha))
-                DetalleCard("🏆", "Grupo", detalle.grupo)
+                DetalleCard("🏆", "Grupo", detalle.grupo ?: "N/A")
                 DetalleCard("🏟", "Estadio", detalle.estadio)
                 DetalleCard("🎟", "Precio entrada", detalle.precio)
                 Spacer(Modifier.height(24.dp))

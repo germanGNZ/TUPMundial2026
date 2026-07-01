@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.gonzalez.tupmundial2026.data.Ticket
 import com.gonzalez.tupmundial2026.models.DTOPartidosDetalle
 import com.gonzalez.tupmundial2026.repository.TicketRepository
+import com.gonzalez.tupmundial2026.ui.components.DatosComprador
+import com.gonzalez.tupmundial2026.ui.components.validarDatosComprador
 import kotlinx.coroutines.launch
 
 class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
@@ -29,13 +31,36 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
         usuarioId: Int,
         detalle: DTOPartidosDetalle,
         cantidadEntradas: Int,
+        sector: String,
+        metodoPago: String,
+        datosComprador: DatosComprador,
+        subtotal: Double,
+        cargoServicio: Double,
+        total: Double,
         onExito: () -> Unit
     ) {
+        // Valida los datos del comprador antes de llamar al repositorio
+        val errorValidacion = validarDatosComprador(datosComprador)
+        if (errorValidacion != null) {
+            errorMessage = errorValidacion
+            return
+        }
+
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
             try {
-                val ticket = repository.comprar(usuarioId, detalle, cantidadEntradas)
+                val ticket = repository.comprar(
+                    usuarioId = usuarioId,
+                    detalle = detalle,
+                    cantidadEntradas = cantidadEntradas,
+                    sector = sector,
+                    metodoPago = metodoPago,
+                    datosComprador = datosComprador,
+                    subtotal = subtotal,
+                    cargoServicio = cargoServicio,
+                    total = total
+                )
                 ultimoTicketComprado = ticket
                 onExito()
             } catch (e: Exception) {

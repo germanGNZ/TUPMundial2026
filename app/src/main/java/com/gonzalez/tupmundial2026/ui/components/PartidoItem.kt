@@ -46,7 +46,7 @@ fun PartidoItem(partido: DTOPartidosLista, onClick: () -> Unit) {
                         .background(VerdeOscuro)
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
-                    Text(partido.grupo, color = Dorado, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text(partido.grupo ?: "", color = Dorado, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 }
                 Spacer(Modifier.height(8.dp))
                 Text("${partido.equipo1} vs ${partido.equipo2}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)

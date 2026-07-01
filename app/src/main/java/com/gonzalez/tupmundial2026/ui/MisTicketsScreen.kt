@@ -33,6 +33,8 @@ fun MisTicketsScreen(
 
     // Total de entradas compradas
     val totalEntradas = tickets.sumOf { it.cantidadEntradas }
+    // Total gastado en todas las compras
+    val totalGastado = tickets.sumOf { it.total }
 
     LaunchedEffect(usuarioId) { ticketViewModel.cargarMisTickets(usuarioId) }
 
@@ -67,18 +69,34 @@ fun MisTicketsScreen(
                         .background(VerdeOscuro)
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Total de entradas compradas", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
-                        Text(
-                            "$totalEntradas",
-                            color = Dorado,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Total de entradas compradas", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
+                            Text(
+                                "$totalEntradas",
+                                color = Dorado,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+                        Spacer(Modifier.height(6.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Total gastado", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
+                            Text(
+                                com.gonzalez.tupmundial2026.utils.formatPrecio(totalGastado),
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
 

@@ -18,7 +18,20 @@ data class Ticket(
     val fecha: String,
     val estadio: String,
     val grupo: String,
-    val precio: String,
+    val precio: Double,        // precio unitario original, tal como viene de la API
     val cantidadEntradas: Int,
+    // sector elegido dentro del estadio (Popular / Platea / VIP)
+    val sector: String = "Platea",
+    // método de pago elegido (simulado, no se procesa pago real)
+    val metodoPago: String = "",
+    // datos personales del comprador, obligatorios para confirmar la compra
+    val dniComprador: String = "",
+    val nombreComprador: String = "",
+    val emailComprador: String = "",
+    val telefonoComprador: String = "",
+    // desglose del precio final pagado
+    val subtotal: Double = 0.0,
+    val cargoServicio: Double = 0.0,
+    val total: Double = 0.0,
     val fechaCompra: Long = System.currentTimeMillis() // timestamp de la compra
 )

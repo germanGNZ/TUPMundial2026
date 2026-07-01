@@ -36,7 +36,7 @@ fun PartidosScreen(
 
     // Lista de grupos únicos extraídos de los partidos
     val grupos = remember(partidos) {
-        partidos.map { it.grupo }.distinct().sorted()
+        partidos.mapNotNull { it.grupo }.distinct().sorted()
     }
 
     // Partidos filtrados según el grupo seleccionado

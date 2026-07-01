@@ -3,13 +3,20 @@ package com.gonzalez.tupmundial2026.repository
 import com.gonzalez.tupmundial2026.data.Ticket
 import com.gonzalez.tupmundial2026.data.TicketDao
 import com.gonzalez.tupmundial2026.models.DTOPartidosDetalle
+import com.gonzalez.tupmundial2026.ui.components.DatosComprador
 
 class TicketRepository(private val dao: TicketDao) {
 
     suspend fun comprar(
         usuarioId: Int,
         detalle: DTOPartidosDetalle,
-        cantidadEntradas: Int
+        cantidadEntradas: Int,
+        sector: String,
+        metodoPago: String,
+        datosComprador: DatosComprador,
+        subtotal: Double,
+        cargoServicio: Double,
+        total: Double
     ): Ticket {
         // Verifica si el usuario ya compró para este partido
         val yaCompro = dao.yaCompro(usuarioId, detalle.id) > 0
@@ -27,9 +34,18 @@ class TicketRepository(private val dao: TicketDao) {
             equipo2 = detalle.equipo2,
             fecha = detalle.fecha,
             estadio = detalle.estadio,
-            grupo = detalle.grupo,
+            grupo = detalle.grupo ?: "",
             precio = detalle.precio,
-            cantidadEntradas = cantidadEntradas
+            cantidadEntradas = cantidadEntradas,
+            sector = sector,
+            metodoPago = metodoPago,
+            dniComprador = datosComprador.dni,
+            nombreComprador = datosComprador.nombreCompleto,
+            emailComprador = datosComprador.email,
+            telefonoComprador = datosComprador.telefono,
+            subtotal = subtotal,
+            cargoServicio = cargoServicio,
+            total = total
         )
         dao.comprar(ticket)
         return ticket

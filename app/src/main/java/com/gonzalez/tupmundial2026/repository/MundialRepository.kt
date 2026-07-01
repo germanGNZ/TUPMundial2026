@@ -8,7 +8,7 @@ import com.gonzalez.tupmundial2026.network.MundialApiService
 class MundialRepository(private val api: MundialApiService) {
 
     suspend fun fetchPartidosLista(): List<DTOPartidosLista> {
-        return api.getPartidosLista()
+        return api.getPartidosLista().datos
     }
 
     suspend fun fetchPartidoDetalle(id: Int): DTOPartidosDetalle {

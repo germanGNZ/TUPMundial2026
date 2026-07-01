@@ -55,7 +55,7 @@ fun DetalleScreen(
                 DetalleCard("📅", "Fecha", formatFecha(detalle.fecha))
                 DetalleCard("🏆", "Grupo", detalle.grupo ?: "N/A")
                 DetalleCard("🏟", "Estadio", detalle.estadio)
-                DetalleCard("🎟", "Precio entrada", detalle.precio)
+                DetalleCard("🎟", "Precio entrada", detalle.precio.toString())
                 Spacer(Modifier.height(24.dp))
                 Button(
                     onClick = { onComprarEntrada(detalle) },

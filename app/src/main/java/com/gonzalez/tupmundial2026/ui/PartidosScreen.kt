@@ -4,13 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,19 +34,29 @@ fun PartidosScreen(
     val partidos = viewModel.partidosLista
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
+    val textoBusqueda = viewModel.textoBusqueda
 
-    // Estado del filtro de grupos
     var grupoSeleccionado by remember { mutableStateOf<String?>(null) }
+    var faseSeleccionada by remember { mutableStateOf<String?>(null) }
 
-    // Lista de grupos únicos extraídos de los partidos
+    LaunchedEffect(textoBusqueda) {
+        if (textoBusqueda.isNotEmpty()) {
+            grupoSeleccionado = null
+            faseSeleccionada = null
+        }
+    }
+
     val grupos = remember(partidos) {
         partidos.mapNotNull { it.grupo }.distinct().sorted()
     }
 
-    // Partidos filtrados según el grupo seleccionado
-    val partidosFiltrados = remember(partidos, grupoSeleccionado) {
-        if (grupoSeleccionado == null) partidos
-        else partidos.filter { it.grupo == grupoSeleccionado }
+    val partidosFiltrados = remember(partidos, grupoSeleccionado, faseSeleccionada, textoBusqueda) {
+        when {
+            textoBusqueda.isNotEmpty() -> partidos
+            faseSeleccionada != null   -> partidos.filter { it.fase == faseSeleccionada }
+            grupoSeleccionado != null  -> partidos.filter { it.grupo == grupoSeleccionado }
+            else                       -> partidos
+        }
     }
 
     LaunchedEffect(Unit) { viewModel.LlamarPartidos() }
@@ -63,6 +77,40 @@ fun PartidosScreen(
             }
         )
 
+        OutlinedTextField(
+            value = textoBusqueda,
+            onValueChange = { viewModel.buscar(it) },
+            placeholder = { Text("Buscar equipo, grupo o estadio...", fontSize = 13.sp) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Dorado) },
+            trailingIcon = {
+                if (textoBusqueda.isNotEmpty()) {
+                    IconButton(onClick = {
+                        viewModel.limpiarBusqueda()
+                        grupoSeleccionado = null
+                        faseSeleccionada = null
+                    }) {
+                        Icon(Icons.Default.Clear, contentDescription = "Limpiar",
+                            tint = Color.White.copy(alpha = 0.6f))
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Dorado,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                focusedContainerColor = Color.White.copy(alpha = 0.05f),
+                unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
+                cursorColor = Dorado
+            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
         when {
             isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -71,25 +119,39 @@ fun PartidosScreen(
                 }
             }
             error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(error, color = Color(0xFFEF5350), textAlign = TextAlign.Center, modifier = Modifier.padding(24.dp))
+                Text(error, color = Color(0xFFEF5350), textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(24.dp))
             }
             partidos.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("No hay partidos disponibles.", color = Color.White.copy(alpha = 0.6f))
             }
             else -> {
-                // Chips de filtro por grupo
-                FiltroGrupos(
-                    grupos = grupos,
-                    grupoSeleccionado = grupoSeleccionado,
-                    onGrupoClick = { grupoSeleccionado = it }
-                )
+                if (textoBusqueda.isEmpty()) {
+                    FiltroGrupos(
+                        grupos = grupos,
+                        grupoSeleccionado = grupoSeleccionado,
+                        onGrupoClick = { grupoSeleccionado = it },
+                        faseSeleccionada = faseSeleccionada,
+                        onFaseClick = { faseSeleccionada = it }
+                    )
+                }
 
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(partidosFiltrados) { partido ->
-                        PartidoItem(partido = partido, onClick = { onPartidoClick(partido.id) })
+                if (partidosFiltrados.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            "Sin resultados para \"$textoBusqueda\"",
+                            color = Color.White.copy(alpha = 0.5f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(partidosFiltrados) { partido ->
+                            PartidoItem(partido = partido, onClick = { onPartidoClick(partido.id) })
+                        }
                     }
                 }
             }

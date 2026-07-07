@@ -18,43 +18,97 @@ import com.gonzalez.tupmundial2026.ui.Dorado
 import com.gonzalez.tupmundial2026.ui.FondoOscuro
 import com.gonzalez.tupmundial2026.ui.VerdeOscuro
 
-// Chips horizontales para filtrar partidos por grupo.
-// Se usa en PartidosScreen. "Todos" muestra todos los partidos.
+private val FASES_ELIMINATORIAS = listOf(
+    "Dieciseisavos de Final",
+    "Octavos de Final",
+    "Cuartos de Final",
+    "Semifinal",
+    "Tercer Puesto",
+    "Final"
+)
+
+private fun etiquetaFase(fase: String) = when (fase) {
+    "Dieciseisavos de Final" -> "16avos"
+    "Octavos de Final"       -> "Octavos"
+    "Cuartos de Final"       -> "Cuartos"
+    "Semifinal"              -> "Semis"
+    "Tercer Puesto"          -> "3er Puesto"
+    "Final"                  -> "⭐ Final"
+    else                     -> fase
+}
 
 @Composable
 fun FiltroGrupos(
     grupos: List<String>,
     grupoSeleccionado: String?,
-    onGrupoClick: (String?) -> Unit
+    onGrupoClick: (String?) -> Unit,
+    faseSeleccionada: String? = null,
+    onFaseClick: ((String?) -> Unit)? = null
 ) {
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Chip "Todos"
-        item {
-            ChipGrupo(
-                texto = "Todos",
-                seleccionado = grupoSeleccionado == null,
-                onClick = { onGrupoClick(null) }
-            )
+    Column {
+        // Fila 1: Todos + Grupos A-L
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                ChipFiltro(
+                    texto = "Todos",
+                    seleccionado = grupoSeleccionado == null && faseSeleccionada == null,
+                    onClick = {
+                        onGrupoClick(null)
+                        onFaseClick?.invoke(null)
+                    }
+                )
+            }
+            items(grupos) { grupo ->
+                ChipFiltro(
+                    texto = grupo,
+                    seleccionado = grupoSeleccionado == grupo,
+                    onClick = {
+                        onGrupoClick(grupo)
+                        onFaseClick?.invoke(null)
+                    }
+                )
+            }
         }
-        items(grupos) { grupo ->
-            ChipGrupo(
-                texto = grupo,
-                seleccionado = grupoSeleccionado == grupo,
-                onClick = { onGrupoClick(grupo) }
-            )
+
+        // Fila 2: Fases eliminatorias
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(FASES_ELIMINATORIAS) { fase ->
+                ChipFiltro(
+                    texto = etiquetaFase(fase),
+                    seleccionado = faseSeleccionada == fase,
+                    colorSeleccionado = when (fase) {
+                        "Final"            -> Color(0xFFFFD700)
+                        "Semifinal"        -> Color(0xFFE0E0E0)
+                        "Cuartos de Final" -> Color(0xFFCD7F32)
+                        else               -> Dorado
+                    },
+                    onClick = {
+                        onFaseClick?.invoke(if (faseSeleccionada == fase) null else fase)
+                        onGrupoClick(null)
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ChipGrupo(texto: String, seleccionado: Boolean, onClick: () -> Unit) {
+private fun ChipFiltro(
+    texto: String,
+    seleccionado: Boolean,
+    colorSeleccionado: Color = Dorado,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(if (seleccionado) Dorado else VerdeOscuro)
+            .background(if (seleccionado) colorSeleccionado else VerdeOscuro)
             .clickable { onClick() }
             .padding(horizontal = 14.dp, vertical = 7.dp)
     ) {

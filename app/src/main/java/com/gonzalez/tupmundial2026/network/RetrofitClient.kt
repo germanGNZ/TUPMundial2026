@@ -8,7 +8,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 object RetrofitClient {
     private val json = Json { ignoreUnknownKeys = true }
 
-    private const val BASE_URL = "http://192.168.1.11:5123/"
+    private const val BASE_URL = "http://192.168.1.7:5123/"
 
     val api: MundialApiService by lazy {
         Retrofit.Builder()

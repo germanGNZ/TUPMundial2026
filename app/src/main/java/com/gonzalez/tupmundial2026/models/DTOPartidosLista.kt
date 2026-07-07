@@ -10,6 +10,7 @@ data class DTOPartidosLista(
         val equipo1: String,
         val equipo2: String,
         val grupo: String? = null,
+        val fase: String? = null,
         val fecha: String,
         val estadio: String,
 )

@@ -18,6 +18,9 @@ import com.gonzalez.tupmundial2026.ui.components.MensajeError
 import com.gonzalez.tupmundial2026.ui.components.campoColores
 import com.gonzalez.tupmundial2026.viewModel.AuthViewModel
 
+private fun sinEmojis(texto: String): String =
+    texto.filter { it.code in 32..126 || it.code > 160 && !Character.isSurrogate(it) }
+
 @Composable
 fun RegisterScreen(
     viewModel: AuthViewModel,
@@ -42,24 +45,36 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = nombre,
-                onValueChange = { nombre = it; viewModel.limpiarError() },
+                onValueChange = {
+                    val filtrado = sinEmojis(it)
+                    if (filtrado.length <= 50) { nombre = filtrado; viewModel.limpiarError() }
+                },
                 label = { Text("Nombre") },
+                supportingText = { Text("${nombre.length}/50", color = Color.White.copy(alpha = 0.4f)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = campoColores(),
                 singleLine = true
             )
+
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it; viewModel.limpiarError() },
+                onValueChange = {
+                    val filtrado = sinEmojis(it).filter { c -> !c.isWhitespace() }
+                    if (filtrado.length <= 100) { email = filtrado; viewModel.limpiarError() }
+                },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = campoColores(),
                 singleLine = true
             )
+
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it; viewModel.limpiarError() },
+                onValueChange = {
+                    val filtrado = sinEmojis(it).filter { c -> !c.isWhitespace() }
+                    if (filtrado.length <= 30) { password = filtrado; viewModel.limpiarError() }
+                },
                 label = { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
@@ -67,9 +82,13 @@ fun RegisterScreen(
                 colors = campoColores(),
                 singleLine = true
             )
+
             OutlinedTextField(
                 value = confirmarPassword,
-                onValueChange = { confirmarPassword = it; viewModel.limpiarError() },
+                onValueChange = {
+                    val filtrado = sinEmojis(it).filter { c -> !c.isWhitespace() }
+                    if (filtrado.length <= 30) { confirmarPassword = filtrado; viewModel.limpiarError() }
+                },
                 label = { Text("Confirmar contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),

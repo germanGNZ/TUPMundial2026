@@ -20,11 +20,24 @@ import com.gonzalez.tupmundial2026.ui.TarjetaFondo
 import com.gonzalez.tupmundial2026.ui.VerdeOscuro
 import com.gonzalez.tupmundial2026.utils.formatFecha
 
-// Tarjeta individual de partido para la lista.
-// Separada acá para poder reutilizarla sin copiar código.
-
 @Composable
 fun PartidoItem(partido: DTOPartidosLista, onClick: () -> Unit) {
+    val etiqueta = when {
+        !partido.grupo.isNullOrBlank() -> partido.grupo
+        !partido.fase.isNullOrBlank()  -> partido.fase
+        else -> "Partido ${partido.id}"
+    }
+
+    val chipColor = when {
+        !partido.grupo.isNullOrBlank()                   -> VerdeOscuro
+        partido.fase == "Final"                          -> Color(0xFF7B3F00)
+        partido.fase == "Semifinal"                      -> Color(0xFF4A0072)
+        partido.fase == "Cuartos de Final"               -> Color(0xFF1A3A5C)
+        partido.fase == "Octavos de Final"               -> Color(0xFF1A3A5C)
+        partido.fase == "Dieciseisavos de Final"         -> Color(0xFF1A3A5C)
+        else                                             -> VerdeOscuro
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,13 +56,24 @@ fun PartidoItem(partido: DTOPartidosLista, onClick: () -> Unit) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
-                        .background(VerdeOscuro)
+                        .background(chipColor)
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
-                    Text(partido.grupo ?: "", color = Dorado, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text(
+                        etiqueta!!,
+                        color = Dorado,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
                 }
                 Spacer(Modifier.height(8.dp))
-                Text("${partido.equipo1} vs ${partido.equipo2}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "${partido.equipo1} vs ${partido.equipo2}",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(Modifier.height(6.dp))
                 Text("📅 ${formatFecha(partido.fecha)}", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)
                 Text("🏟 ${partido.estadio}", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)

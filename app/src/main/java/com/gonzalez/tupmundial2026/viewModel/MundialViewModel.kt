@@ -12,14 +12,17 @@ import kotlinx.coroutines.launch
 
 class MundialViewModel(private val repository: MundialRepository) : ViewModel() {
 
+    private var _todosLosPartidos = emptyList<DTOPartidosLista>()
+
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
         private set
     var partidosDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
         private set
-
     var isLoading by mutableStateOf(false)
         private set
     var errorMessage by mutableStateOf<String?>(null)
+        private set
+    var textoBusqueda by mutableStateOf("")
         private set
 
     fun LlamarPartidos() {
@@ -27,7 +30,8 @@ class MundialViewModel(private val repository: MundialRepository) : ViewModel() 
             isLoading = true
             errorMessage = null
             try {
-                partidosLista = repository.fetchPartidosLista()
+                _todosLosPartidos = repository.fetchPartidosLista()
+                aplicarFiltros()
             } catch (e: Exception) {
                 errorMessage = "Error al cargar los partidos: ${e.message}"
             } finally {
@@ -46,6 +50,30 @@ class MundialViewModel(private val repository: MundialRepository) : ViewModel() 
                 errorMessage = "Error al cargar el detalle: ${e.message}"
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun buscar(texto: String) {
+        textoBusqueda = texto
+        aplicarFiltros()
+    }
+
+    fun limpiarBusqueda() {
+        textoBusqueda = ""
+        aplicarFiltros()
+    }
+
+    private fun aplicarFiltros() {
+        val texto = textoBusqueda.trim().lowercase()
+        partidosLista = if (texto.isEmpty()) {
+            _todosLosPartidos
+        } else {
+            _todosLosPartidos.filter { p ->
+                p.equipo1.lowercase().contains(texto) ||
+                        p.equipo2.lowercase().contains(texto) ||
+                        (p.grupo?.lowercase()?.contains(texto) == true) ||
+                        p.estadio.lowercase().contains(texto)
             }
         }
     }

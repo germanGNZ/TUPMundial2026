@@ -17,5 +17,6 @@ data class Usuario(
     val id: Int = 0,
     val nombre: String,
     val email: String,
-    val password: String
+    val password: String,
+    val token: String = ""
 )

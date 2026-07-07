@@ -25,7 +25,11 @@ class MainActivity : ComponentActivity() {
 
         val db = AppDatabase.getInstance(this)
 
-        val authViewModel = AuthViewModel(AuthRepository(db.usuarioDao()))
+        // AuthRepository ahora usa la API para registro/login
+        // y Room como caché local
+        val authViewModel = AuthViewModel(
+            AuthRepository(db.usuarioDao(), RetrofitClient.api)
+        )
         val mundialViewModel = MundialViewModel(MundialRepository(RetrofitClient.api))
         val ticketViewModel = TicketViewModel(TicketRepository(db.ticketDao()))
 

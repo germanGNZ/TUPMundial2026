@@ -23,12 +23,13 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
     var misTickets by mutableStateOf(emptyList<Ticket>())
         private set
 
-    // guarda el último ticket comprado para mostrarlo en la confirmación
     var ultimoTicketComprado by mutableStateOf<Ticket?>(null)
         private set
 
     fun comprar(
         usuarioId: Int,
+        emailUsuario: String,       // NUEVO: para enviar a la API
+        nombreUsuario: String,      // NUEVO: para enviar a la API
         detalle: DTOPartidosDetalle,
         cantidadEntradas: Int,
         sector: String,
@@ -39,7 +40,6 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
         total: Double,
         onExito: () -> Unit
     ) {
-        // Valida los datos del comprador antes de llamar al repositorio
         val errorValidacion = validarDatosComprador(datosComprador)
         if (errorValidacion != null) {
             errorMessage = errorValidacion
@@ -52,6 +52,8 @@ class TicketViewModel(private val repository: TicketRepository) : ViewModel() {
             try {
                 val ticket = repository.comprar(
                     usuarioId = usuarioId,
+                    emailUsuario = emailUsuario,
+                    nombreUsuario = nombreUsuario,
                     detalle = detalle,
                     cantidadEntradas = cantidadEntradas,
                     sector = sector,

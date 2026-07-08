@@ -25,13 +25,16 @@ class MainActivity : ComponentActivity() {
 
         val db = AppDatabase.getInstance(this)
 
-        // AuthRepository ahora usa la API para registro/login
-        // y Room como caché local
         val authViewModel = AuthViewModel(
             AuthRepository(db.usuarioDao(), RetrofitClient.api)
         )
         val mundialViewModel = MundialViewModel(MundialRepository(RetrofitClient.api))
-        val ticketViewModel = TicketViewModel(TicketRepository(db.ticketDao()))
+
+        // MODIFICADO: TicketRepository ahora recibe RetrofitClient.api
+        // para poder enviar cada compra a MongoDB además de guardarlo en Room
+        val ticketViewModel = TicketViewModel(
+            TicketRepository(db.ticketDao(), RetrofitClient.api)
+        )
 
         setContent {
             TUPMundial2026Theme {

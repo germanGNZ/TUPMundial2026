@@ -21,6 +21,8 @@ import com.gonzalez.tupmundial2026.viewModel.TicketViewModel
 fun CompraTicketScreen(
     detalle: DTOPartidosDetalle,
     usuarioId: Int,
+    emailUsuario: String,
+    nombreUsuario: String,
     ticketViewModel: TicketViewModel,
     onCompraExitosa: () -> Unit,
     onBack: () -> Unit
@@ -101,6 +103,8 @@ fun CompraTicketScreen(
                 onClick = {
                     ticketViewModel.comprar(
                         usuarioId = usuarioId,
+                        emailUsuario = emailUsuario,
+                        nombreUsuario = nombreUsuario,
                         detalle = detalle,
                         cantidadEntradas = cantidad,
                         sector = sectorSeleccionado.nombre,

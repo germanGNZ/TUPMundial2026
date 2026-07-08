@@ -96,6 +96,8 @@ fun AppNavigation(
             if (detalle != null) {
                 CompraTicketScreen(
                     detalle = detalle,
+                    emailUsuario = authViewModel.usuarioActual?.email ?: "",
+                    nombreUsuario = authViewModel.usuarioActual?.nombre ?: "",
                     usuarioId = usuarioId,
                     ticketViewModel = ticketViewModel,
                     onCompraExitosa = {

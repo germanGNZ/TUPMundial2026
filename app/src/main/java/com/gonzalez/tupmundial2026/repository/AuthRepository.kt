@@ -5,14 +5,13 @@ import com.gonzalez.tupmundial2026.data.UsuarioDao
 import com.gonzalez.tupmundial2026.models.DTOLoginRequest
 import com.gonzalez.tupmundial2026.models.DTORegistroRequest
 import com.gonzalez.tupmundial2026.network.MundialApiService
+import com.gonzalez.tupmundial2026.network.RetrofitClient
 
 class AuthRepository(
     private val dao: UsuarioDao,
     private val api: MundialApiService
 ) {
     suspend fun registrar(nombre: String, email: String, password: String): Usuario {
-        // Llamar a la API — si el email ya existe, la API devuelve 422
-        // y Retrofit lanza una excepción que captura el ViewModel
         val response = api.registro(
             DTORegistroRequest(
                 nombre = nombre.trim(),
@@ -21,17 +20,17 @@ class AuthRepository(
             )
         )
 
-        // Guardar en Room como caché local (para uso offline)
+        // CLAVE: guardar el token en RetrofitClient para que todas las
+        // peticiones siguientes lo incluyan en el header Authorization
+        RetrofitClient.token = response.token
+
         val usuario = Usuario(
             nombre = response.nombre,
             email = response.email,
             password = password,
             token = response.token
         )
-
-        // Insertar o reemplazar si ya existe
         try { dao.registrar(usuario) } catch (_: Exception) {}
-
         return usuario
     }
 
@@ -43,15 +42,22 @@ class AuthRepository(
             )
         )
 
+        // CLAVE: guardar el token en RetrofitClient
+        RetrofitClient.token = response.token
+
         val usuario = Usuario(
             nombre = response.nombre,
             email = response.email,
             password = password,
             token = response.token
         )
-
         try { dao.registrar(usuario) } catch (_: Exception) {}
-
         return usuario
+    }
+
+    fun logout() {
+        // Nota: Al cerrar sesión se borra el token para que las próximas
+        // peticiones no lleven un token de otra sesión
+        RetrofitClient.token = null
     }
 }

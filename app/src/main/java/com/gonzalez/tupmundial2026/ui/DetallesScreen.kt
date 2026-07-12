@@ -20,6 +20,7 @@ import com.gonzalez.tupmundial2026.ui.components.DetalleCard
 import com.gonzalez.tupmundial2026.ui.components.EquiposVsCard
 import com.gonzalez.tupmundial2026.ui.components.HeaderMundial
 import com.gonzalez.tupmundial2026.utils.formatFecha
+import com.gonzalez.tupmundial2026.utils.formatPrecio
 import com.gonzalez.tupmundial2026.viewModel.MundialViewModel
 
 @Composable
@@ -49,13 +50,13 @@ fun DetalleScreen(
                 Text("No se encontró el partido.", color = Color.White)
             }
             else -> Column(modifier = Modifier.padding(20.dp)) {
-                // Card equipos — ahora reutilizable desde components
                 EquiposVsCard(equipo1 = detalle.equipo1, equipo2 = detalle.equipo2)
                 Spacer(Modifier.height(16.dp))
                 DetalleCard("📅", "Fecha", formatFecha(detalle.fecha))
                 DetalleCard("🏆", "Grupo", detalle.grupo ?: "N/A")
                 DetalleCard("🏟", "Estadio", detalle.estadio)
-                DetalleCard("🎟", "Precio entrada", detalle.precio.toString())
+                // precio ya es Double — formatPrecio lo muestra como "$150.00"
+                DetalleCard("🎟", "Precio entrada", formatPrecio(detalle.precio))
                 Spacer(Modifier.height(24.dp))
                 Button(
                     onClick = { onComprarEntrada(detalle) },

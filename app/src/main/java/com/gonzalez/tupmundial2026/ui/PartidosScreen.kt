@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,9 @@ fun PartidosScreen(
 ) {
     val partidos = viewModel.partidosLista
     val isLoading = viewModel.isLoading
+    val isCargandoMas = viewModel.isCargandoMas
+    val hayMasPaginas = viewModel.hayMasPaginas
+    val paginaInfo = viewModel.paginaInfo
     val error = viewModel.errorMessage
     val textoBusqueda = viewModel.textoBusqueda
 
@@ -115,6 +119,7 @@ fun PartidosScreen(
             isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(color = Dorado)
+                    Spacer(Modifier.height(8.dp))
                     Text("Cargando partidos...", color = Color.White.copy(alpha = 0.6f))
                 }
             }
@@ -150,7 +155,66 @@ fun PartidosScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(partidosFiltrados) { partido ->
-                            PartidoItem(partido = partido, onClick = { onPartidoClick(partido.id) })
+                            PartidoItem(
+                                partido = partido,
+                                onClick = { onPartidoClick(partido.id) }
+                            )
+                        }
+
+                        // Nota: Info de paginado y botón "Cargar más"
+                        // Solo se muestra si no hay filtros activos
+                        if (textoBusqueda.isEmpty() && grupoSeleccionado == null && faseSeleccionada == null) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (paginaInfo.isNotEmpty()) {
+                                        Text(
+                                            paginaInfo,
+                                            color = Color.White.copy(alpha = 0.4f),
+                                            fontSize = 11.sp
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                    }
+
+                                    if (hayMasPaginas) {
+                                        Button(
+                                            onClick = { viewModel.cargarMasPaginas() },
+                                            enabled = !isCargandoMas,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = VerdeOscuro
+                                            ),
+                                            shape = RoundedCornerShape(10.dp),
+                                            modifier = Modifier.fillMaxWidth(0.7f)
+                                        ) {
+                                            if (isCargandoMas) {
+                                                CircularProgressIndicator(
+                                                    color = Color.White,
+                                                    modifier = Modifier.size(18.dp),
+                                                    strokeWidth = 2.dp
+                                                )
+                                                Spacer(Modifier.width(8.dp))
+                                                Text("Cargando...", color = Color.White)
+                                            } else {
+                                                Text(
+                                                    "Cargar más partidos",
+                                                    color = Color.White,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                            }
+                                        }
+                                    } else if (partidos.isNotEmpty()) {
+                                        Text(
+                                            "✓ Todos los partidos cargados",
+                                            color = Dorado.copy(alpha = 0.7f),
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

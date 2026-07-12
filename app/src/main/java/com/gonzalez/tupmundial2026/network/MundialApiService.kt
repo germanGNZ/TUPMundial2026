@@ -34,7 +34,6 @@ interface MundialApiService {
     @POST("api/auth/login")
     suspend fun login(@Body body: DTOLoginRequest): DTOAuthResponse
 
-    // ─── Tickets (NUEVO) ──────────────────────────────────────────────────
     // Envía un ticket a MongoDB después de confirmada la compra
     @POST("api/ticket")
     suspend fun crearTicket(@Body body: DTOTicketRequest): DTOTicketResponse

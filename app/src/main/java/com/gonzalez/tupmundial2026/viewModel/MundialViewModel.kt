@@ -12,30 +12,80 @@ import kotlinx.coroutines.launch
 
 class MundialViewModel(private val repository: MundialRepository) : ViewModel() {
 
-    private var _todosLosPartidos = emptyList<DTOPartidosLista>()
+    companion object {
+        const val POR_PAGINA = 10   // partidos por página
+    }
 
+    // Nota: Lista acumulada de partidos (se agrega al ir cargando más páginas)
     var partidosLista by mutableStateOf(emptyList<DTOPartidosLista>())
         private set
+
     var partidosDetalle by mutableStateOf<DTOPartidosDetalle?>(null)
         private set
+
     var isLoading by mutableStateOf(false)
         private set
+
+    // Nota: true solo cuando se está cargando más páginas (no la primera)
+    var isCargandoMas by mutableStateOf(false)
+        private set
+
     var errorMessage by mutableStateOf<String?>(null)
         private set
+
     var textoBusqueda by mutableStateOf("")
         private set
 
+    // Paginado
+    private var paginaActual = 1
+    var hayMasPaginas by mutableStateOf(false)
+        private set
+
+    var paginaInfo by mutableStateOf("")   // "Página 1 de 11 (104 partidos)"
+        private set
+
     fun LlamarPartidos() {
+        // Nota: Primera carga: resetea la lista y arranca desde página 1
+        paginaActual = 1
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
             try {
-                _todosLosPartidos = repository.fetchPartidosLista()
-                aplicarFiltros()
+                val respuesta = repository.fetchPartidosPaginados(
+                    pagina = 1,
+                    porPagina = POR_PAGINA
+                )
+                partidosLista = respuesta.datos
+                hayMasPaginas = paginaActual < respuesta.totalPaginas
+                paginaInfo = "Página 1 de ${respuesta.totalPaginas} (${respuesta.total} partidos)"
             } catch (e: Exception) {
                 errorMessage = "Error al cargar los partidos: ${e.message}"
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun cargarMasPaginas() {
+        if (isCargandoMas || !hayMasPaginas) return
+        viewModelScope.launch {
+            isCargandoMas = true
+            errorMessage = null
+            try {
+                paginaActual++
+                val respuesta = repository.fetchPartidosPaginados(
+                    pagina = paginaActual,
+                    porPagina = POR_PAGINA
+                )
+                // Agregar los nuevos partidos a la lista existente
+                partidosLista = partidosLista + respuesta.datos
+                hayMasPaginas = paginaActual < respuesta.totalPaginas
+                paginaInfo = "Página $paginaActual de ${respuesta.totalPaginas} (${respuesta.total} partidos)"
+            } catch (e: Exception) {
+                paginaActual--   // revertir si falló
+                errorMessage = "Error al cargar más partidos: ${e.message}"
+            } finally {
+                isCargandoMas = false
             }
         }
     }
@@ -56,25 +106,9 @@ class MundialViewModel(private val repository: MundialRepository) : ViewModel() 
 
     fun buscar(texto: String) {
         textoBusqueda = texto
-        aplicarFiltros()
     }
 
     fun limpiarBusqueda() {
         textoBusqueda = ""
-        aplicarFiltros()
-    }
-
-    private fun aplicarFiltros() {
-        val texto = textoBusqueda.trim().lowercase()
-        partidosLista = if (texto.isEmpty()) {
-            _todosLosPartidos
-        } else {
-            _todosLosPartidos.filter { p ->
-                p.equipo1.lowercase().contains(texto) ||
-                        p.equipo2.lowercase().contains(texto) ||
-                        (p.grupo?.lowercase()?.contains(texto) == true) ||
-                        p.estadio.lowercase().contains(texto)
-            }
-        }
     }
 }

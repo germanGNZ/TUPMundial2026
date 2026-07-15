@@ -20,8 +20,27 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     var usuarioActual by mutableStateOf<Usuario?>(null)
         private set
 
+    var verificandoSesion by mutableStateOf(true)
+        private set
+
     val estaLogueado: Boolean
         get() = usuarioActual != null
+
+    fun restaurarSesion(onFin: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val token = repository.getTokenGuardado()
+                if (!token.isNullOrBlank()) {
+                    com.gonzalez.tupmundial2026.network.RetrofitClient.token = token
+                    usuarioActual = Usuario(nombre = "", email = "", password = "", token = token)
+                }
+            } catch (_: Exception) {
+            } finally {
+                verificandoSesion = false
+                onFin()
+            }
+        }
+    }
 
     fun login(email: String, password: String, onExito: () -> Unit) {
         if (email.isBlank() || password.isBlank()) {
@@ -33,7 +52,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             errorMessage = null
             try {
                 usuarioActual = repository.login(email, password)
-                // Nota: El token ya quedó guardado en RetrofitClient dentro del repository
                 onExito()
             } catch (e: Exception) {
                 errorMessage = e.message
@@ -51,7 +69,8 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             errorMessage = "Completá todos los campos"; return
         }
         if (!email.contains("@")) { errorMessage = "El email no es válido"; return }
-        if (password.length < 6) { errorMessage = "La contraseña debe tener al menos 6 caracteres"; return }
+        if (password.length < 8) { errorMessage = "La contraseña debe tener al menos 8 caracteres"; return }
+        if (!password.any { it.isUpperCase() }) { errorMessage = "La contraseña debe tener al menos una mayúscula"; return }
         if (password != confirmarPassword) { errorMessage = "Las contraseñas no coinciden"; return }
 
         viewModelScope.launch {
@@ -59,7 +78,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             errorMessage = null
             try {
                 usuarioActual = repository.registrar(nombre, email, password)
-                // Nota: El token ya quedó guardado en RetrofitClient dentro del repository
                 onExito()
             } catch (e: Exception) {
                 errorMessage = e.message
@@ -70,10 +88,11 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     }
 
     fun logout() {
-        // Nota: Limpia el token de RetrofitClient Y el usuario actual
-        repository.logout()
-        usuarioActual = null
-        errorMessage = null
+        viewModelScope.launch {
+            repository.logout()
+            usuarioActual = null
+            errorMessage = null
+        }
     }
 
     fun limpiarError() { errorMessage = null }
